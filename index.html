@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IngredientsHub — Know what's really in your kitchen</title>
+
+<!-- Bootstrap 5 -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,500&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --basil-deep:#1F3A2E;
+    --basil-mid:#2E4F3E;
+    --sage:#8CA491;
+    --turmeric:#E3A008;
+    --paprika:#C1502E;
+    --parchment:#FAF6EE;
+    --parchment-dim:#F0EADC;
+    --ink:#221C15;
+    --ink-soft:#5B5346;
+
+    --font-display:'Fraunces', serif;
+    --font-body:'Inter', sans-serif;
+    --font-mono:'IBM Plex Mono', monospace;
+  }
+
+  *{ box-sizing:border-box; }
+
+  html{ scroll-behavior:smooth; }
+
+  body{
+    font-family:var(--font-body);
+    color:var(--ink);
+    background:var(--parchment);
+    -webkit-font-smoothing:antialiased;
+  }
+
+  h1,h2,h3,.display-font{
+    font-family:var(--font-display);
+    letter-spacing:-0.01em;
+  }
+
+  .eyebrow{
+    font-family:var(--font-mono);
+    font-size:.75rem;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--paprika);
+    font-weight:500;
+  }
+
+  .btn-turmeric{
+    background:var(--turmeric);
+    border:none;
+    color:var(--ink);
+    font-weight:600;
+    padding:.75rem 1.6rem;
+    border-radius:2px;
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .btn-turmeric:hover{
+    background:#cf9207;
+    color:var(--ink);
+    transform:translateY(-2px);
+    box-shadow:0 8px 18px rgba(227,160,8,.35);
+  }
+
+  .btn-outline-basil{
+    border:1.5px solid var(--basil-deep);
+    color:var(--basil-deep);
+    font-weight:600;
+    padding:.75rem 1.6rem;
+    border-radius:2px;
+    background:transparent;
+    transition:all .15s ease;
+  }
+  .btn-outline-basil:hover{
+    background:var(--basil-deep);
+    color:var(--parchment);
+  }
+
+  /* ===== NAV ===== */
+  .navbar-hub{
+    background:var(--parchment);
+    border-bottom:1px solid rgba(34,28,21,.08);
+    padding-top:1rem;
+    padding-bottom:1rem;
+  }
+  .navbar-hub .navbar-brand{
+    font-family:var(--font-display);
+    font-weight:700;
+    font-size:1.5rem;
+    color:var(--basil-deep);
+  }
+  .navbar-hub .navbar-brand span{ color:var(--paprika); }
+  .navbar-hub .nav-link{
+    color:var(--ink);
+    font-weight:500;
+    font-size:.95rem;
+    margin:0 .5rem;
+  }
+  .navbar-hub .nav-link:hover{ color:var(--paprika); }
+
+  /* ===== HERO ===== */
+  .hero{
+    background:var(--basil-deep);
+    color:var(--parchment);
+    position:relative;
+    overflow:hidden;
+    padding:6rem 0 5rem;
+  }
+  .hero::before{
+    content:"";
+    position:absolute;
+    top:-20%; right:-10%;
+    width:600px; height:600px;
+    background:radial-gradient(circle, rgba(227,160,8,.18) 0%, transparent 70%);
+    pointer-events:none;
+  }
+  .hero::after{
+    content:"";
+    position:absolute;
+    bottom:-30%; left:-8%;
+    width:500px; height:500px;
+    background:radial-gradient(circle, rgba(140,164,145,.15) 0%, transparent 70%);
+    pointer-events:none;
+  }
+  .hero h1{
+    font-size:clamp(2.4rem, 5vw, 4rem);
+    font-weight:600;
+    line-height:1.05;
+  }
+  .hero h1 em{
+    font-style:italic;
+    font-weight:500;
+    color:var(--turmeric);
+  }
+  .hero p.lead{
+    color:rgba(250,246,238,.82);
+    font-size:1.15rem;
+    max-width:34rem;
+  }
+
+  .search-jar{
+    background:var(--parchment);
+    border-radius:4px;
+    padding:.4rem;
+    box-shadow:0 20px 40px rgba(0,0,0,.25);
+    max-width:520px;
+  }
+  .search-jar input{
+    border:none;
+    background:transparent;
+    padding:.7rem .9rem;
+    font-family:var(--font-body);
+    color:var(--ink);
+  }
+  .search-jar input:focus{ outline:none; box-shadow:none; }
+  .search-jar .btn{
+    background:var(--paprika);
+    color:var(--parchment);
+    border:none;
+    border-radius:3px;
+    font-weight:600;
+    padding:.7rem 1.2rem;
+  }
+  .search-jar .btn:hover{ background:#a44226; }
+
+  .stat-strip{
+    border-top:1px solid rgba(250,246,238,.15);
+    margin-top:3.5rem;
+    padding-top:2rem;
+  }
+  .stat-strip .stat-num{
+    font-family:var(--font-mono);
+    font-size:1.6rem;
+    color:var(--turmeric);
+    font-weight:500;
+  }
+  .stat-strip .stat-label{
+    color:rgba(250,246,238,.7);
+    font-size:.85rem;
+  }
+
+  /* ===== SECTION LABELS ===== */
+  .section-pad{ padding:5.5rem 0; }
+  .section-head{ max-width:42rem; margin-bottom:3rem; }
+  .section-head h2{
+    font-size:clamp(1.8rem, 3vw, 2.6rem);
+    font-weight:600;
+    color:var(--ink);
+  }
+  .section-head p{ color:var(--ink-soft); font-size:1.05rem; }
+
+  /* ===== CATEGORY CARDS ===== */
+  .cat-card{
+    background:#fff;
+    border:1px solid rgba(34,28,21,.08);
+    border-radius:6px;
+    padding:1.8rem 1.6rem;
+    height:100%;
+    transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+  }
+  .cat-card:hover{
+    transform:translateY(-5px);
+    box-shadow:0 16px 30px rgba(34,28,21,.09);
+    border-color:var(--sage);
+  }
+  .cat-icon{
+    width:48px; height:48px;
+    border-radius:50%;
+    background:var(--parchment-dim);
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.3rem;
+    color:var(--basil-deep);
+    margin-bottom:1rem;
+  }
+  .cat-card h3{
+    font-size:1.15rem;
+    font-weight:600;
+    margin-bottom:.4rem;
+  }
+  .cat-card p{ color:var(--ink-soft); font-size:.92rem; margin-bottom:.7rem; }
+  .cat-count{
+    font-family:var(--font-mono);
+    font-size:.75rem;
+    color:var(--paprika);
+    letter-spacing:.05em;
+  }
+
+  /* ===== HOW IT WORKS ===== */
+  .how-it-works{ background:var(--parchment-dim); }
+  .step{
+    position:relative;
+    padding-left:3.2rem;
+  }
+  .step .step-num{
+    position:absolute;
+    left:0; top:0;
+    font-family:var(--font-mono);
+    font-size:.85rem;
+    color:var(--parchment);
+    background:var(--basil-deep);
+    width:2.2rem; height:2.2rem;
+    border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .step h3{ font-size:1.2rem; font-weight:600; margin-bottom:.4rem; }
+  .step p{ color:var(--ink-soft); font-size:.95rem; }
+  .step-connector{
+    border-left:1.5px dashed rgba(34,28,21,.2);
+    height:2.5rem;
+    margin-left:1.1rem;
+  }
+
+  /* ===== INGREDIENT TICKETS (signature element) ===== */
+  .ticket{
+    background:#fff;
+    border-radius:10px;
+    position:relative;
+    padding:1.7rem 1.5rem 1.5rem;
+    height:100%;
+    box-shadow:0 10px 24px rgba(34,28,21,.07);
+    border:1px solid rgba(34,28,21,.06);
+  }
+  .ticket::before, .ticket::after{
+    content:"";
+    position:absolute;
+    top:50%;
+    transform:translateY(-50%);
+    width:20px; height:20px;
+    background:var(--parchment);
+    border-radius:50%;
+  }
+  .ticket::before{ left:-10px; }
+  .ticket::after{ right:-10px; }
+  .ticket .perforation{
+    border-top:1.5px dashed rgba(34,28,21,.18);
+    margin:1rem 0;
+  }
+  .ticket-swatch{
+    width:38px; height:38px;
+    border-radius:50%;
+    margin-bottom:1rem;
+  }
+  .ticket h3{
+    font-family:var(--font-display);
+    font-size:1.3rem;
+    font-weight:600;
+    margin-bottom:.15rem;
+  }
+  .ticket .origin{
+    font-family:var(--font-mono);
+    font-size:.72rem;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+  }
+  .ticket p.fact{
+    font-size:.9rem;
+    color:var(--ink-soft);
+    margin-bottom:0;
+  }
+  .ticket .tag{
+    display:inline-block;
+    font-family:var(--font-mono);
+    font-size:.68rem;
+    padding:.2rem .55rem;
+    border-radius:20px;
+    background:var(--parchment-dim);
+    color:var(--basil-deep);
+    margin-right:.3rem;
+  }
+
+  /* ===== TESTIMONIALS ===== */
+  .testimonial-card{
+    background:var(--basil-deep);
+    color:var(--parchment);
+    border-radius:8px;
+    padding:2rem;
+    height:100%;
+  }
+  .testimonial-card i.bi-quote{ color:var(--turmeric); font-size:1.6rem; }
+  .testimonial-card p{ font-size:.98rem; color:rgba(250,246,238,.88); }
+  .testimonial-card .name{ font-weight:600; }
+  .testimonial-card .role{ font-family:var(--font-mono); font-size:.75rem; color:var(--sage); }
+  .avatar-dot{
+    width:42px; height:42px;
+    border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-display);
+    font-weight:700;
+    color:var(--basil-deep);
+  }
+
+  /* ===== CTA / NEWSLETTER ===== */
+  .cta-band{
+    background:var(--turmeric);
+    color:var(--ink);
+    padding:4rem 0;
+  }
+  .cta-band h2{ font-weight:600; font-size:clamp(1.6rem,3vw,2.3rem); }
+  .cta-band .form-control{
+    border-radius:2px;
+    border:1.5px solid var(--ink);
+    padding:.75rem .9rem;
+  }
+
+  /* ===== FOOTER ===== */
+  footer{
+    background:var(--ink);
+    color:rgba(250,246,238,.65);
+    padding:3rem 0 1.5rem;
+  }
+  footer .brand{
+    font-family:var(--font-display);
+    color:var(--parchment);
+    font-size:1.3rem;
+    font-weight:700;
+  }
+  footer a{ color:rgba(250,246,238,.65); text-decoration:none; font-size:.9rem; }
+  footer a:hover{ color:var(--turmeric); }
+  footer h6{
+    font-family:var(--font-mono);
+    font-size:.72rem;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:rgba(250,246,238,.4);
+    margin-bottom:1rem;
+  }
+  .footer-bottom{
+    border-top:1px solid rgba(250,246,238,.12);
+    margin-top:2.5rem;
+    padding-top:1.5rem;
+    font-size:.8rem;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ transition:none !important; scroll-behavior:auto !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ NAV ============ -->
+<nav class="navbar navbar-expand-lg navbar-hub sticky-top">
+  <div class="container">
+    <a class="navbar-brand" href="#top">Ingredients<span>Hub</span></a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse justify-content-end" id="navMenu">
+      <ul class="navbar-nav align-items-lg-center">
+        <li class="nav-item"><a class="nav-link" href="#categories">Categories</a></li>
+        <li class="nav-item"><a class="nav-link" href="#how">How it works</a></li>
+        <li class="nav-item"><a class="nav-link" href="#spotlight">Spotlight</a></li>
+        <li class="nav-item"><a class="nav-link" href="#community">Community</a></li>
+        <li class="nav-item ms-lg-2 mt-2 mt-lg-0">
+          <a class="btn btn-turmeric btn-sm" href="#cta">Start exploring</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- ============ SECTION 1 · HERO ============ -->
+<header class="hero" id="top">
+  <div class="container position-relative">
+    <div class="row align-items-center gy-5">
+      <div class="col-lg-6">
+        <p class="eyebrow mb-3" style="color:var(--turmeric);">2,400+ ingredients · 180 cuisines</p>
+        <h1 class="mb-4">Know exactly <em>what's</em><br>in your kitchen.</h1>
+        <p class="lead mb-4">IngredientsHub is a living reference for everything you cook with — origin, nutrition, flavor pairings, and smart substitutes, all in one search.</p>
+
+        <div class="search-jar d-flex mb-4">
+          <input type="text" class="form-control" placeholder="Try &ldquo;turmeric&rdquo; or &ldquo;buttermilk&rdquo;">
+          <button class="btn">Search</button>
+        </div>
+
+        <div class="d-flex gap-3">
+          <a href="#categories" class="btn btn-outline-basil" style="border-color:rgba(250,246,238,.5); color:var(--parchment);">Browse categories</a>
+        </div>
+
+        <div class="row stat-strip">
+          <div class="col-4">
+            <div class="stat-num">2,400+</div>
+            <div class="stat-label">ingredients catalogued</div>
+          </div>
+          <div class="col-4">
+            <div class="stat-num">180</div>
+            <div class="stat-label">world cuisines</div>
+          </div>
+          <div class="col-4">
+            <div class="stat-num">50k+</div>
+            <div class="stat-label">substitutes mapped</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-5 offset-lg-1">
+        <div class="ticket" style="transform:rotate(-2deg);">
+          <div class="ticket-swatch" style="background:var(--turmeric);"></div>
+          <span class="origin">Kerala, India</span>
+          <h3>Turmeric</h3>
+          <p class="fact mb-2">Earthy, slightly bitter rhizome. The backbone of curry blends and golden milk.</p>
+          <div class="perforation"></div>
+          <span class="tag">anti-inflammatory</span>
+          <span class="tag">dyes easily</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ============ SECTION 2 · CATEGORIES ============ -->
+<section class="section-pad" id="categories">
+  <div class="container">
+    <div class="section-head">
+      <p class="eyebrow mb-2">Browse by category</p>
+      <h2>Six aisles, one pantry.</h2>
+      <p>Every ingredient in the hub is sorted the way you'd actually look for it — by what it is, not just what it's called.</p>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-sm-6 col-lg-4">
+        <div class="cat-card">
+          <div class="cat-icon"><i class="bi bi-flower2"></i></div>
+          <h3>Spices &amp; Herbs</h3>
+          <p>Whole, ground, fresh, and dried — with heat levels and freshness windows.</p>
+          <span class="cat-count">412 entries</span>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-4">
+        <div class="cat-card">
+          <div class="cat-icon"><i class="bi bi-basket2"></i></div>
+          <h3>Grains &amp; Legumes</h3>
+          <p>Cook times, soak ratios, and gluten status for every pantry staple.</p>
+          <span class="cat-count">238 entries</span>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-4">
+        <div class="cat-card">
+          <div class="cat-icon"><i class="bi bi-egg-fried"></i></div>
+          <h3>Dairy &amp; Eggs</h3>
+          <p>Fat content, cultures, and swap ratios for baking and sauces.</p>
+          <span class="cat-count">96 entries</span>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-4">
+        <div class="cat-card">
+          <div class="cat-icon"><i class="bi bi-fish"></i></div>
+          <h3>Proteins &amp; Seafood</h3>
+          <p>Cuts, sustainability notes, and doneness temperatures.</p>
+          <span class="cat-count">174 entries</span>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-4">
+        <div class="cat-card">
+          <div class="cat-icon"><i class="bi bi-flower3"></i></div>
+          <h3>Fresh Produce</h3>
+          <p>Seasonality calendars and storage tips by region.</p>
+          <span class="cat-count">560 entries</span>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-4">
+        <div class="cat-card">
+          <div class="cat-icon"><i class="bi bi-droplet"></i></div>
+          <h3>Oils, Vinegars &amp; Ferments</h3>
+          <p>Smoke points, acidity, and pairing notes for dressings and marinades.</p>
+          <span class="cat-count">147 entries</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SECTION 3 · HOW IT WORKS ============ -->
+<section class="section-pad how-it-works" id="how">
+  <div class="container">
+    <div class="row gy-5 align-items-center">
+      <div class="col-lg-5">
+        <p class="eyebrow mb-2">The process</p>
+        <h2 class="mb-3" style="font-size:clamp(1.8rem,3vw,2.6rem); font-weight:600;">From question to confident swap in three steps.</h2>
+        <p style="color:var(--ink-soft);">No account needed to search. Save a free pantry list once you find ingredients worth remembering.</p>
+      </div>
+      <div class="col-lg-6 offset-lg-1">
+        <div class="step">
+          <span class="step-num">01</span>
+          <h3>Search an ingredient</h3>
+          <p>Type a name, a nickname, or even a symptom like "what's a vegan sub for buttermilk."</p>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step">
+          <span class="step-num">02</span>
+          <h3>See the full profile</h3>
+          <p>Origin, nutrition, flavor pairings, storage life, and three vetted substitutes with ratios.</p>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step">
+          <span class="step-num">03</span>
+          <h3>Save to your pantry</h3>
+          <p>Keep a running list of what's in your kitchen so future searches are tuned to what you already own.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SECTION 4 · INGREDIENT SPOTLIGHT ============ -->
+<section class="section-pad" id="spotlight">
+  <div class="container">
+    <div class="section-head">
+      <p class="eyebrow mb-2">This week's spotlight</p>
+      <h2>Four ingredients worth knowing better.</h2>
+      <p>Pulled from the hub's most-searched list — each one comes with a fact most home cooks miss.</p>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-sm-6 col-lg-3">
+        <div class="ticket">
+          <div class="ticket-swatch" style="background:#8B2E2E;"></div>
+          <span class="origin">Iran &amp; Kashmir</span>
+          <h3>Saffron</h3>
+          <div class="perforation"></div>
+          <p class="fact">A pound needs roughly 75,000 hand-picked crocus threads — why a pinch goes a long way.</p>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-3">
+        <div class="ticket">
+          <div class="ticket-swatch" style="background:#C88B3A;"></div>
+          <span class="origin">Japan</span>
+          <h3>Miso</h3>
+          <div class="perforation"></div>
+          <p class="fact">Longer fermentation deepens the color — white miso is younger and milder than red.</p>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-3">
+        <div class="ticket">
+          <div class="ticket-swatch" style="background:var(--sage);"></div>
+          <span class="origin">Guatemala</span>
+          <h3>Cardamom</h3>
+          <div class="perforation"></div>
+          <p class="fact">Crack the pod just before use — ground cardamom loses aroma within weeks.</p>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-3">
+        <div class="ticket">
+          <div class="ticket-swatch" style="background:#D8B24C;"></div>
+          <span class="origin">Pantry staple</span>
+          <h3>Nutritional Yeast</h3>
+          <div class="perforation"></div>
+          <p class="fact">Deactivated, so it won't leaven anything — it's prized purely for its cheesy, umami flavor.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SECTION 5 · COMMUNITY ============ -->
+<section class="section-pad" id="community" style="background:var(--parchment-dim);">
+  <div class="container">
+    <div class="section-head">
+      <p class="eyebrow mb-2">Community notes</p>
+      <h2>Trusted by people who cook for a living — and those who just cook a lot.</h2>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="testimonial-card">
+          <i class="bi bi-quote"></i>
+          <p class="mt-2">I use the substitute ratios mid-recipe more than any cookbook I own. It's saved dinner more than once.</p>
+          <div class="d-flex align-items-center gap-2 mt-3">
+            <div class="avatar-dot" style="background:var(--turmeric);">R</div>
+            <div>
+              <div class="name">Riya M.</div>
+              <div class="role">Home cook, Pune</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="testimonial-card">
+          <i class="bi bi-quote"></i>
+          <p class="mt-2">The seasonality calendars for produce are more accurate than what my local market posts.</p>
+          <div class="d-flex align-items-center gap-2 mt-3">
+            <div class="avatar-dot" style="background:var(--sage);">D</div>
+            <div>
+              <div class="name">Daniel O.</div>
+              <div class="role">Line cook, Lisbon</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="testimonial-card">
+          <i class="bi bi-quote"></i>
+          <p class="mt-2">My students search IngredientsHub before they ask me what something is. That's the right kind of competition.</p>
+          <div class="d-flex align-items-center gap-2 mt-3">
+            <div class="avatar-dot" style="background:var(--paprika); color:var(--parchment);">A</div>
+            <div>
+              <div class="name">Amara K.</div>
+              <div class="role">Culinary instructor</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CTA / NEWSLETTER ============ -->
+<section class="cta-band" id="cta">
+  <div class="container">
+    <div class="row align-items-center g-4">
+      <div class="col-lg-6">
+        <h2 class="mb-2">Get one ingredient deep-dive a week.</h2>
+        <p class="mb-0">No spam — just a short profile of one ingredient, its origin, and a smart substitute.</p>
+      </div>
+      <div class="col-lg-6">
+        <form class="d-flex gap-2 flex-column flex-sm-row" onsubmit="return false;">
+          <input type="email" class="form-control" placeholder="you@example.com" required>
+          <button type="submit" class="btn" style="background:var(--ink); color:var(--parchment); border-radius:2px; font-weight:600; padding:.75rem 1.4rem; white-space:nowrap;">Subscribe</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="container">
+    <div class="row gy-4">
+      <div class="col-lg-4">
+        <div class="brand mb-2">Ingredients<span style="color:var(--turmeric);">Hub</span></div>
+        <p style="font-size:.9rem; max-width:22rem;">A living reference for everything in your kitchen — origin, nutrition, pairings, and substitutes, in one search.</p>
+      </div>
+      <div class="col-6 col-lg-2">
+        <h6>Explore</h6>
+        <ul class="list-unstyled d-flex flex-column gap-2">
+          <li><a href="#categories">Categories</a></li>
+          <li><a href="#spotlight">Spotlight</a></li>
+          <li><a href="#how">How it works</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-lg-2">
+        <h6>Company</h6>
+        <ul class="list-unstyled d-flex flex-column gap-2">
+          <li><a href="#">About</a></li>
+          <li><a href="#">Contributors</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-lg-2">
+        <h6>Legal</h6>
+        <ul class="list-unstyled d-flex flex-column gap-2">
+          <li><a href="#">Privacy</a></li>
+          <li><a href="#">Terms</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-lg-2">
+        <h6>Follow</h6>
+        <ul class="list-unstyled d-flex flex-column gap-2">
+          <li><a href="#"><i class="bi bi-instagram me-1"></i>Instagram</a></li>
+          <li><a href="#"><i class="bi bi-pinterest me-1"></i>Pinterest</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom d-flex flex-column flex-sm-row justify-content-between">
+      <span>&copy; 2026 IngredientsHub. All rights reserved.</span>
+      <span>Made for curious cooks.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
