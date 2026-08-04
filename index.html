@@ -385,6 +385,38 @@
   @media (prefers-reduced-motion: reduce){
     *{ transition:none !important; scroll-behavior:auto !important; }
   }
+  .links-grid{
+  display:grid;
+  grid-template-columns:repeat(5, 1fr);
+  gap:.9rem;
+  margin-top:1rem;
+}
+.links-grid a{
+  display:block;
+  text-align:center;
+  background:#fff;
+  border:1px solid rgba(34,28,21,.1);
+  border-radius:4px;
+  padding:.8rem .6rem;
+  font-family:var(--font-mono);
+  font-size:.82rem;
+  color:var(--basil-deep);
+  text-decoration:none;
+  transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease, background .15s ease;
+}
+.links-grid a:hover{
+  background:var(--basil-deep);
+  color:var(--parchment);
+  border-color:var(--basil-deep);
+  transform:translateY(-3px);
+  box-shadow:0 10px 20px rgba(34,28,21,.12);
+}
+@media (max-width: 991px){
+  .links-grid{ grid-template-columns:repeat(3, 1fr); }
+}
+@media (max-width: 575px){
+  .links-grid{ grid-template-columns:repeat(2, 1fr); }
+}
 </style>
 </head>
 <body>
@@ -618,6 +650,7 @@
       <h2>Worth a Visit</h2>
       <p>Sources, studies, and guides we return to often — for readers who want to go deeper than a single ingredient page.</p>
     </div>
+  <div class="links-grid">
   <a href="https://www.crunchbase.com/organization/valley-saffron" target="_blank" rel="noopener noreferrer">Crunchbase</a>
   <a href="https://www.tumblr.com/valleysaffron/822816754707365888/valley-saffron-best-saffron-brandin-this-blog-we?source=share" target="_blank" rel="noopener noreferrer">Tumblr</a>
   <a href="https://www.f6s.com/valley-saffron" target="_blank" rel="noopener noreferrer">F6S</a>
@@ -647,6 +680,7 @@
   <a href="https://anyflip.com/homepage/medbk#Home" target="_blank" rel="noopener noreferrer">AnyFlip</a>
   <a href="https://www.zillow.com/profile/sanifshah%20ss" target="_blank" rel="noopener noreferrer">Zillow</a>
   <a href="https://speakerdeck.com/saffronn">Speaker Deck</a>
+  </div>
     <div class="row g-4">
       <div class="col-md-4">
         <div class="testimonial-card">
